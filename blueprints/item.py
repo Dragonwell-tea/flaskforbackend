@@ -12,11 +12,11 @@ def get_categories_route():
     response = [{**m.to_dict()} for m in categories]
     return flask.jsonify(response)
 
-# @bp.route("/product", methods=["GET"])
-# def get_products_route():
-#     products = db.session.query(ProductModel)
-#     response = [{**m.to_dict()} for m in products]
-#     return flask.jsonify(response)
+@bp.route("/product", methods=["GET"])
+def get_products_route():
+    products = db.session.query(ProductModel)
+    response = [{**m.to_dict()} for m in products]
+    return flask.jsonify(response)
 #
 # @bp.route("/product/<product_id>", methods=["GET"])
 # def get_product_route(product_id):

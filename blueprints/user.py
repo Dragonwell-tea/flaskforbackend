@@ -108,6 +108,21 @@ def login():
         }
     return flask.jsonify(result)
 
-# @bp.route("/currentUser", methods=['GET'])
+
+# CURRENTUSER_SCHEMA = schema.Schema(
+#     {"email": schema.And(str, len)}
+# )
+# @bp.route("/currentuser", methods=['GET'])
 # def currentUser():
-#     pass
+#     if not isinstance(flask.request.json, dict):
+#         return {"status": "Bad request"}, 400
+#     try:
+#         request = CURRENTUSER_SCHEMA.validate(flask.request.json.copy())
+#     except schema.SchemaError as error:
+#         return {"status": "Bad request", "message": str(error)}, 400
+#     email = request["email"]
+#     result = {}
+#     if db.session.query(UserModel).filter(UserModel.email == email).first():
+#         current_user = db.session.get(User, current)
+#         return flask.jsonify(result)
+
