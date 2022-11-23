@@ -91,12 +91,13 @@ def login():
             'status': 0,
             'Msg': 'cannot found account',
         }
+        return flask.jsonify(result)
     if not (password == user.hash):
         result = {
             'status': 0,
             'Msg': 'password is wrong',
         }
-
+        return flask.jsonify(result)
     result = {
         'status': 1,
         'Msg': 'login success',
