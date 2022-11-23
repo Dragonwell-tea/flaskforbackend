@@ -83,26 +83,29 @@ def login():
 
     email = request["email"]
     password = request["password"]
+    result = {}
 
-    # 用entry存储查询结果
+    # 存储查询结果
     user = db.session.query(UserModel).filter(UserModel.email == email).first()
     if user is None:
         result = {
             'status': 0,
-            'Msg': 'cannot found account',
+            'Msg': 'cannot find account',
         }
-        return flask.jsonify(result)
-    if not (password == user.hash):
+        # return flask.jsonify(result)
+    # if not (password == user.hash):
+    elif password != user.hash:
         result = {
             'status': 0,
             'Msg': 'password is wrong',
         }
-        return flask.jsonify(result)
-    result = {
-        'status': 1,
-        'Msg': 'login success',
-        'data': user.to_dict()
-    }
+        # return flask.jsonify(result)
+    else:
+        result = {
+            'status': 1,
+            'Msg': 'login success',
+            'data': user.to_dict()
+        }
     return flask.jsonify(result)
 
 # @bp.route("/currentUser", methods=['GET'])
