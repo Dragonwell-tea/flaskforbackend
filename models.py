@@ -54,29 +54,6 @@ class CategoryModel(db.Model):
         }
 
 
-# class ProductModel(db.Model):
-#     __tablename__ = 'product'
-#     product_id = db.Column(db.BIGINT, primary_key=True)
-#     product_name = db.Column(db.TEXT)
-#     picture = db.Column(db.TEXT)
-#     selling_price = db.Column(db.FLOAT)
-#     description = db.Column(db.TEXT)
-#     available = db.Column(db.INTEGER)
-#     user_id = db.Column(db.ForeignKey(UserModel.user_id))
-#     category_id = db.Column(db.ForeignKey(CategoryModel.category_id))
-#     category = db.relationship("CategoryModel")
-#
-#     def to_dict(self):
-#         return {
-#             "product_id": self.product_id,
-#             "product_name": self.product_name,
-#             "picture": self.picture,
-#             "selling_price": self.selling_price,
-#             "description": self.description,
-#             "available": self.available,
-#             "user_id": self.user_id,
-#             "category": self.category.category_name,
-#         }
 class ProductModel(db.Model):
     __tablename__= 'product'
     product_id = db.Column(db.BIGINT, primary_key=True)
@@ -107,6 +84,7 @@ class ProductModel(db.Model):
             "user_id": self.user_id,
             "user_name": self.user.user_name,
             "category": self.category.category_name,
+            "views": self.views
         }
 
 
