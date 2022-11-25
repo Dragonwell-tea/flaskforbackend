@@ -7,15 +7,20 @@ class UserRole(Enum):
     user = 0
     admin = 1
 
-class ProductAvailable(Enum):
-    unsold: 0
-    sold: 1
+# class ProductAvailable(Enum):
+#     unsold: 0
+#     sold: 1
+class ProductStatus(Enum):
+    pending = 0
+    posted = 1 #审核通过
+    closed = 2
+    reject = 3#不通过
 
 
-class OrderStatus(Enum):
-    waitCheck: 0
-    checked: 1
-    finish: 2
+# class OrderStatus(Enum):
+#     waitCheck: 0
+#     checked: 1
+#     finish: 2
 
 class UserModel(db.Model):
     __tablename__ = 'user'
@@ -49,15 +54,45 @@ class CategoryModel(db.Model):
         }
 
 
+# class ProductModel(db.Model):
+#     __tablename__ = 'product'
+#     product_id = db.Column(db.BIGINT, primary_key=True)
+#     product_name = db.Column(db.TEXT)
+#     picture = db.Column(db.TEXT)
+#     selling_price = db.Column(db.FLOAT)
+#     description = db.Column(db.TEXT)
+#     available = db.Column(db.INTEGER)
+#     user_id = db.Column(db.ForeignKey(UserModel.user_id))
+#     category_id = db.Column(db.ForeignKey(CategoryModel.category_id))
+#     category = db.relationship("CategoryModel")
+#
+#     def to_dict(self):
+#         return {
+#             "product_id": self.product_id,
+#             "product_name": self.product_name,
+#             "picture": self.picture,
+#             "selling_price": self.selling_price,
+#             "description": self.description,
+#             "available": self.available,
+#             "user_id": self.user_id,
+#             "category": self.category.category_name,
+#         }
 class ProductModel(db.Model):
-    __tablename__ = 'product'
+    __tablename__= 'product'
     product_id = db.Column(db.BIGINT, primary_key=True)
     product_name = db.Column(db.TEXT)
     picture = db.Column(db.TEXT)
     selling_price = db.Column(db.FLOAT)
     description = db.Column(db.TEXT)
-    available = db.Column(db.INTEGER)
+    views = db.Column(db.INTEGER)
+    status = db.Column(db.INTEGER)
     user_id = db.Column(db.ForeignKey(UserModel.user_id))
+    user = db.relationship(
+        "UserModel",
+        overlaps="recipes",
+        primaryjoin="UserModel.user_id == ProductModel.user_id",
+        lazy=True,
+    )
     category_id = db.Column(db.ForeignKey(CategoryModel.category_id))
     category = db.relationship("CategoryModel")
 
@@ -68,8 +103,9 @@ class ProductModel(db.Model):
             "picture": self.picture,
             "selling_price": self.selling_price,
             "description": self.description,
-            "available": self.available,
+            "status": self.status,
             "user_id": self.user_id,
+            "user_name": self.user.user_name,
             "category": self.category.category_name,
         }
 
@@ -77,12 +113,13 @@ class ProductModel(db.Model):
 class OrderModel(db.Model):
     __tablename__ = 'order'
     order_id = db.Column(db.BIGINT, primary_key=True)
-    status = db.Column(db.INTEGER)
+    # status = db.Column(db.INTEGER)
     create_date = db.Column(db.TIMESTAMP)
     user_id = db.Column(db.ForeignKey(UserModel.user_id))
     product_id = db.Column(db.ForeignKey(ProductModel.product_id))
     product = db.relationship("ProductModel")
 
+#status存疑
     def to_dict(self):
         return {
             "order_id": self.order_id,
@@ -91,3 +128,4 @@ class OrderModel(db.Model):
             "user_id": self.user_id,
             "product_id": self.product_id,
         }
+

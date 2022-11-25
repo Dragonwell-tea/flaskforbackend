@@ -14,6 +14,7 @@ bp = Blueprint("user", __name__, url_prefix="/")
 EMAIL_REGEX = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
 
 
+
 def is_email(email_address):
     return re.fullmatch(EMAIL_REGEX, email_address)
 
@@ -108,21 +109,40 @@ def login():
         }
     return flask.jsonify(result)
 
+UPDATE_USER_SCHEMA = schema.Schema(
+    {
+        "user_id": schema.And(str, len),
+        "user_name": schema.And(str, len),
+        "phone": schema.And(str, len),
+        "email": schema.And(str, len, is_email),
+        "profile_picture": schema.And(str, len),
 
-# CURRENTUSER_SCHEMA = schema.Schema(
-#     {"email": schema.And(str, len)}
-# )
-# @bp.route("/currentuser", methods=['GET'])
-# def currentUser():
-#     if not isinstance(flask.request.json, dict):
-#         return {"status": "Bad request"}, 400
-#     try:
-#         request = CURRENTUSER_SCHEMA.validate(flask.request.json.copy())
-#     except schema.SchemaError as error:
-#         return {"status": "Bad request", "message": str(error)}, 400
-#     email = request["email"]
-#     result = {}
-#     if db.session.query(UserModel).filter(UserModel.email == email).first():
-#         current_user = db.session.get(User, current)
-#         return flask.jsonify(result)
+    }
+)
 
+@bp.route("/updateProfile", methods=['PUT'])
+def updateProfile():
+    if not isinstance(flask.request.json, dict):
+        return {"status": "Bad request"}, 400
+    try:
+        request = UPDATE_USER_SCHEMA.validate(flask.request.json.copy())
+    except schema.SchemaError as error:
+        return {"status": "Bad request", "message": str(error)}, 400
+
+
+    current_user_id = request["user_id"]
+    current_user = db.session.get(UserModel, current_user_id)
+    current_user.user_name = request["user_name"]
+    current_user.phone = request["phone"]
+    current_user.email = request["email"]
+    current_user.profile_picture = request["profile_picture"]
+
+    db.session.merge(current_user)
+    db.session.commit()
+    result = {
+        'status': 1,
+        'Msg': 'successsful update',
+        'data': current_user.to_dict()
+    }
+    # return flask.jsonify({"message": "success"})
+    return  flask.jsonify(result)
