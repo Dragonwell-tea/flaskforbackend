@@ -178,24 +178,49 @@ CREATE_ORDER_SCHEMA = schema.Schema(
     }
 )
 
+#用户下单
+@bp.route("/order",methods=["POST"])
+def creat_order_route():
+    try:
+        request = CREATE_ORDER_SCHEMA.validate(flask.request.json.copy())
+    except schema.SchemaError as error:
+        return {"status": "Bad request", "message": str(error)}, 400
+    current_user_id = request["user_id"]
+    current_product_id = request["product_id"]
+    product = db.session.get(ProductModel, current_product_id)
+    product.status = 2 #下单物品状态变为2,
+    db.session.merge(product)
+    db.session.commit()
 
-# #用户下单
-# @bp.route("/order",methods=["POST"])
-# def creat_order_route():
-#     try:
-#         request = CREATE_ORDER_SCHEMA.validate(flask.request.json.copy())
-#     except schema.SchemaError as error:
-#         return {"status": "Bad request", "message": str(error)}, 400
-#     current_user_id = request["user_id"]
-#     current_product_id = request["product_id"]
-#     product = db.session.get(ProductModel, current_product_id)
-#     product.status = 2 #下单物品状态变为2,
-#     db.session.merge(product)
-#     db.session.commit()
-#     order = OrderModel()
-#     order.create_date = datetime.now()
-#     order.product_id = current_product_id
-#     order.user_id = current_user_id
-#     db.session.add(order)
-#     db.session.commit()
-#     return flask.jsonify({"message": "success"})
+    order = OrderModel()
+    # order.create_date = datetime.now()
+    d1 = datetime.now()
+    order.create_date = d1.strftime("%Y-%m-%d %H:%M:%S")
+    order.product_id = current_product_id
+    order.user_id = current_user_id
+    db.session.add(order)
+    db.session.commit()
+    return flask.jsonify({"message": "success"})
+
+
+
+
+
+
+ORDER_HISTORY_SCHEMA = schema.Schema(
+    {
+        "user_id": schema.And(str, len),
+    }
+)
+
+#订单历史
+@bp.route("/currentUserOrder", methods=["GET"])
+
+def current_user_order_route():
+    try:
+        request = ORDER_HISTORY_SCHEMA.validate(flask.request.json.copy())
+    except schema.SchemaError as error:
+        return {"status": "Bad request", "message": str(error)}, 400
+    current_user_id = request["user_id"]
+    orders = db.session.query(OrderModel).filter(OrderModel.user_id == current_user_id)
+    return flask.jsonify([{**m.to_dict()} for m in orders])

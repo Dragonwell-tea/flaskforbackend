@@ -91,12 +91,15 @@ class ProductModel(db.Model):
 class OrderModel(db.Model):
     __tablename__ = 'order'
     order_id = db.Column(db.BIGINT, primary_key=True)
-    create_date = db.Column(db.TIMESTAMP)
-    user_id = db.Column(db.ForeignKey(UserModel.user_id))
-    product_id = db.Column(db.ForeignKey(ProductModel.product_id))
-    product = db.relationship("ProductModel")
+    create_date = db.Column(String(200))
+    #外键
+    # user_id = db.Column(db.ForeignKey(UserModel.user_id))
+    user_id = db.Column(db.VARCHAR(100))
+    # product_id = db.Column(db.ForeignKey(ProductModel.product_id))
+    product_id = db.Column(db.BIGINT)
+    # product = db.relationship("ProductModel")
 
-#status存疑
+
     def to_dict(self):
         return {
             "order_id": self.order_id,

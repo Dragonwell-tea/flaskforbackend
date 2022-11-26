@@ -146,3 +146,24 @@ def updateProfile():
     }
     # return flask.jsonify({"message": "success"})
     return  flask.jsonify(result)
+
+USER_INFO_SCHEMA = schema.Schema(
+    {"user_id": schema.And(str, len)
+
+     }
+)
+
+@bp.route("/getUserInfo", methods=['GET'])
+def get_user_info():
+    if not isinstance(flask.request.json, dict):
+        return {"status": "Bad request"}, 400
+    try:
+        request = USER_INFO_SCHEMA.validate(flask.request.json.copy())
+    except schema.SchemaError as error:
+        return {"status": "Bad request", "message": str(error)}, 400
+
+    current_user_id = request["user_id"]
+    current_user = db.session.get(UserModel, current_user_id)
+
+
+    return  flask.jsonify(current_user.to_dict())
