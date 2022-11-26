@@ -91,7 +91,6 @@ class ProductModel(db.Model):
 class OrderModel(db.Model):
     __tablename__ = 'order'
     order_id = db.Column(db.BIGINT, primary_key=True)
-    # status = db.Column(db.INTEGER)
     create_date = db.Column(db.TIMESTAMP)
     user_id = db.Column(db.ForeignKey(UserModel.user_id))
     product_id = db.Column(db.ForeignKey(ProductModel.product_id))
@@ -101,7 +100,6 @@ class OrderModel(db.Model):
     def to_dict(self):
         return {
             "order_id": self.order_id,
-            "status": self.status,
             "create_date": self.create_date,
             "user_id": self.user_id,
             "product_id": self.product_id,

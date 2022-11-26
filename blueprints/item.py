@@ -1,5 +1,8 @@
 import flask
 import schema
+
+from datetime import datetime
+
 from flask import Blueprint
 from exts import db
 from models import UserModel,CategoryModel,ProductModel,OrderModel,ProductStatus, UserRole
@@ -147,4 +150,52 @@ def check_product_route():
     db.session.commit()
     return flask.jsonify({"message": "The review is successful"})
 
+PRODUCT_PENDING_SCHEMA = schema.Schema(
+    {
+        # "user_id": schema.And(schema.Use(int)),
+        "user_id": schema.And(str, len),
+    }
+)
 
+
+#待审核商品列表
+@bp.route("/productPending", methods=["GET"])
+def get_products_pending_rout():
+    request = PRODUCT_PENDING_SCHEMA.validate(flask.request.json.copy())
+    current_user_id = request["user_id"]
+    current_user = db.session.get(UserModel, current_user_id)
+    if current_user.role != UserRole.admin.value:
+        return {"status": "Permission denied"}, 401
+    products = db.session.query(ProductModel).filter(
+        ProductModel.status == ProductStatus.pending.value)
+    response = [{**m.to_dict()} for m in products]
+    return flask.jsonify(response)
+
+CREATE_ORDER_SCHEMA = schema.Schema(
+    {
+        "product_id": schema.And(schema.Use(int), lambda i: i >= 0),
+        "user_id": schema.And(str, len),
+    }
+)
+
+
+# #用户下单
+# @bp.route("/order",methods=["POST"])
+# def creat_order_route():
+#     try:
+#         request = CREATE_ORDER_SCHEMA.validate(flask.request.json.copy())
+#     except schema.SchemaError as error:
+#         return {"status": "Bad request", "message": str(error)}, 400
+#     current_user_id = request["user_id"]
+#     current_product_id = request["product_id"]
+#     product = db.session.get(ProductModel, current_product_id)
+#     product.status = 2 #下单物品状态变为2,
+#     db.session.merge(product)
+#     db.session.commit()
+#     order = OrderModel()
+#     order.create_date = datetime.now()
+#     order.product_id = current_product_id
+#     order.user_id = current_user_id
+#     db.session.add(order)
+#     db.session.commit()
+#     return flask.jsonify({"message": "success"})
