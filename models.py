@@ -93,10 +93,22 @@ class OrderModel(db.Model):
     order_id = db.Column(db.BIGINT, primary_key=True)
     create_date = db.Column(String(200))
     #外键
-    # user_id = db.Column(db.ForeignKey(UserModel.user_id))
-    user_id = db.Column(db.VARCHAR(100))
-    # product_id = db.Column(db.ForeignKey(ProductModel.product_id))
-    product_id = db.Column(db.BIGINT)
+    user_id = db.Column(db.ForeignKey(UserModel.user_id))
+    user = db.relationship(
+        "UserModel",
+        overlaps="recipes",
+        primaryjoin="UserModel.user_id == OrderModel.user_id",
+        lazy=True,
+    )
+    # user_id = db.Column(db.VARCHAR(100))
+    product_id = db.Column(db.ForeignKey(ProductModel.product_id))
+    product = db.relationship(
+        "ProductModel",
+        overlaps="recipes",
+        primaryjoin="ProductModel.product_id == OrderModel.product_id",
+        lazy=True,
+    )
+    # product_id = db.Column(db.BIGINT)
     # product = db.relationship("ProductModel")
 
 
@@ -105,6 +117,8 @@ class OrderModel(db.Model):
             "order_id": self.order_id,
             "create_date": self.create_date,
             "user_id": self.user_id,
+            "user_name": self.user.user_name,
             "product_id": self.product_id,
+            "product_name": self.product.product_name
         }
 

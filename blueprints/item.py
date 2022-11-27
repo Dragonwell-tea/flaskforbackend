@@ -203,10 +203,6 @@ def creat_order_route():
     return flask.jsonify({"message": "success"})
 
 
-
-
-
-
 ORDER_HISTORY_SCHEMA = schema.Schema(
     {
         "user_id": schema.And(str, len),
