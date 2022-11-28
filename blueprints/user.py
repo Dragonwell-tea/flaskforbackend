@@ -153,17 +153,44 @@ USER_INFO_SCHEMA = schema.Schema(
      }
 )
 
-@bp.route("/getUserInfo", methods=['GET'])
-def get_user_info():
-    if not isinstance(flask.request.json, dict):
-        return {"status": "Bad request"}, 400
-    try:
-        request = USER_INFO_SCHEMA.validate(flask.request.json.copy())
-    except schema.SchemaError as error:
-        return {"status": "Bad request", "message": str(error)}, 400
+# @bp.route("/getUserInfo", methods=['GET'])
+# def get_user_info():
+#     if not isinstance(flask.request.json, dict):
+#         return {"status": "Bad request"}, 400
+#     try:
+#         request = USER_INFO_SCHEMA.validate(flask.request.json.copy())
+#     except schema.SchemaError as error:
+#         return {"status": "Bad request", "message": str(error)}, 400
+#
+#     current_user_id = request["user_id"]
+#     current_user = db.session.get(UserModel, current_user_id)
+#
+#     return  flask.jsonify(current_user.to_dict())
 
-    current_user_id = request["user_id"]
-    current_user = db.session.get(UserModel, current_user_id)
+
+# @bp.route("/product/<product_id>", methods=["GET"])
+# def get_product_route(product_id):
+#     product = db.session.get(ProductModel, product_id)
+#     if not product:
+#         return {"status": "Not Found"}, 404
+#     product.views = product.views + 1
+#     db.session.merge(product)
+#     db.session.commit()
+#     return flask.jsonify(product.to_dict())
+
+@bp.route("/getUserInfo/<user_id>", methods=['GET'])
+def get_user_info(user_id):
+    # if not isinstance(flask.request.json, dict):
+    #     return {"status": "Bad request"}, 400
+    # try:
+    #     request = USER_INFO_SCHEMA.validate(flask.request.json.copy())
+    # except schema.SchemaError as error:
+    #     return {"status": "Bad request", "message": str(error)}, 400
+
+    # current_user_id = request["user_id"]
+    current_user = db.session.get(UserModel, user_id)
+    db.session.merge(current_user)
+    db.session.commit()
 
 
     return  flask.jsonify(current_user.to_dict())

@@ -16,30 +16,42 @@ def get_categories_route():
     return flask.jsonify(response)
 
 
-GET_CATEGORY_SCHEMA = schema.Schema(
-    {
-        "category_id": schema.And(schema.Use(int)),
-    }
-)
+# GET_CATEGORY_SCHEMA = schema.Schema(
+#     {
+#         "category_id": schema.And(schema.Use(int)),
+#     }
+# )
+# #获取指定接口的商品
+# @bp.route("/categorydetail", methods=["GET"])
+# def get_catedetail_route():
+#     if not isinstance(flask.request.json, dict):
+#         return {"status": "Bad request"}, 400
+#     try:
+#         request = GET_CATEGORY_SCHEMA.validate(flask.request.json.copy())
+#     except schema.SchemaError as error:
+#         return {"status": "Bad request", "message": str(error)}, 400
+#     current_category_id = request["category_id"]
+#
+#
+#     product = db.session.query(ProductModel).filter(ProductModel.category_id == current_category_id).all()
+#     if product is None:
+#         result = {
+#             "nothing found in this cate"
+#         }
+#     result = [{**m.to_dict()} for m in product]
+#     return flask.jsonify(result)
+
 #获取指定接口的商品
-@bp.route("/categorydetail", methods=["GET"])
-def get_catedetail_route():
-    if not isinstance(flask.request.json, dict):
-        return {"status": "Bad request"}, 400
-    try:
-        request = GET_CATEGORY_SCHEMA.validate(flask.request.json.copy())
-    except schema.SchemaError as error:
-        return {"status": "Bad request", "message": str(error)}, 400
-    current_category_id = request["category_id"]
-
-
-    product = db.session.query(ProductModel).filter(ProductModel.category_id == current_category_id).all()
+@bp.route("/categorydetail/<category_id>", methods=["GET"])
+def get_catedetail_route(category_id):
+    product = db.session.query(ProductModel).filter(ProductModel.category_id == category_id).all()
     if product is None:
         result = {
             "nothing found in this cate"
         }
     result = [{**m.to_dict()} for m in product]
     return flask.jsonify(result)
+
 
 
 READ_PRODUCT_SCHEMA = schema.Schema(
