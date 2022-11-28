@@ -76,6 +76,18 @@ def get_products_route():
     response = [{**m.to_dict()} for m in products]
     return flask.jsonify(response)
 
+# @bp.route("/product", methods=["GET"])
+# def get_product_route():
+#
+#     products = db.session.query(ProductModel).filter(
+#         ProductModel.status == ProductStatus.posted.value,
+#     )
+#     response = [{**m.to_dict()} for m in products]
+#     return flask.jsonify(response)
+
+
+
+
 #点击量按降序排列传回给web
 ##############商品的status必须是1且点击次数不能是0
 @bp.route("/productHot", methods=["GET"])
@@ -215,20 +227,21 @@ def creat_order_route():
     return flask.jsonify({"message": "success"})
 
 
-ORDER_HISTORY_SCHEMA = schema.Schema(
-    {
-        "user_id": schema.And(str, len),
-    }
-)
+# ORDER_HISTORY_SCHEMA = schema.Schema(
+#     {
+#         "user_id": schema.And(str, len),
+#     }
+# )
 
 #订单历史
-@bp.route("/currentUserOrder", methods=["GET"])
+@bp.route("/currentUserOrder/<user_id>", methods=["GET"])
 
-def current_user_order_route():
-    try:
-        request = ORDER_HISTORY_SCHEMA.validate(flask.request.json.copy())
-    except schema.SchemaError as error:
-        return {"status": "Bad request", "message": str(error)}, 400
-    current_user_id = request["user_id"]
-    orders = db.session.query(OrderModel).filter(OrderModel.user_id == current_user_id)
+def current_user_order_route(user_id):
+    # try:
+    #     request = ORDER_HISTORY_SCHEMA.validate(flask.request.json.copy())
+    # except schema.SchemaError as error:
+    #     return {"status": "Bad request", "message": str(error)}, 400
+    # current_user_id = request["user_id"]
+    # orders = db.session.query(OrderModel).filter(OrderModel.user_id == current_user_id)
+    orders = db.session.query(OrderModel).filter(OrderModel.user_id == user_id)
     return flask.jsonify([{**m.to_dict()} for m in orders])
