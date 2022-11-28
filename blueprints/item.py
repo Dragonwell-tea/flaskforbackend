@@ -183,7 +183,7 @@ PRODUCT_PENDING_SCHEMA = schema.Schema(
 
 
 #待审核商品列表
-@bp.route("/productPending", methods=["GET"])
+@bp.route("/productPending", methods=["POST"])
 def get_products_pending_rout():
     request = PRODUCT_PENDING_SCHEMA.validate(flask.request.json.copy())
     current_user_id = request["user_id"]
