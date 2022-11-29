@@ -29,7 +29,10 @@ class UserModel(db.Model):
     phone = db.Column(db.VARCHAR(100), nullable=False)
     role = db.Column(db.Integer)
     email = db.Column(db.String(100), unique=True)
-    profile_picture = db.Column(db.TEXT)
+    # 图片更改存储类型为二进制
+    # profile_picture = db.Column(db.LargeBinary(length=2048))
+    # profile_picture = db.Column(db.TEXT)
+    profile_picture = db.Column(db.VARCHAR(2048))
     hash = db.Column(db.String(100))
 
     def to_dict(self):
@@ -58,7 +61,10 @@ class ProductModel(db.Model):
     __tablename__= 'product'
     product_id = db.Column(db.BIGINT, primary_key=True)
     product_name = db.Column(db.TEXT)
-    picture = db.Column(db.TEXT)
+    # picture = db.Column(db.TEXT)
+    #图片更改存储类型为二进制
+    # picture = db.Column(db.LargeBinary(length=2048))
+    picture = db.Column(db.VARCHAR(2048))
     selling_price = db.Column(db.FLOAT)
     description = db.Column(db.TEXT)
     views = db.Column(db.INTEGER)
